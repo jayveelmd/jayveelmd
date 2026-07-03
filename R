@@ -1,0 +1,27 @@
+#Script for importing cancer data for Statistical Thinking for Public Health MOOC
+#Program created by me on Jul 3
+
+g <- read.csv("C:/Users/Jayvee Llor/Desktop/ICL/cancer data for MOOC 1.csv",
+              header = TRUE,
+              sep = ",")
+fruit <- g[,'fruit']
+veg <- g[,'veg']
+fruitveg <- fruit + veg
+table(fruitveg)
+smoking <- g[,'smoking']
+age <- g[,'age']
+g$five_a_day <- ifelse(g$fruitveg >= 5, 1, 0)
+hist(fruitveg, xlab = "Portions of Fruit and Veg") 
+main = "Daily consumption of fruit and veg"
+install.packages("ggplot2")
+require(ggplot2)
+g$healthy_BMI <- ifelse(g$bmi > 18.5 & g$bmi <25,1,0)
+#ggplot()+geom_histogram(data=g,aes(x=fruit),bins=5,fill="green",col="darkgreen")+theme_bw()+labs(x="Portions of fruit",y="Number of fruit)+scale_x_continuous(breaks=seq(from=0,to=4,by=1))")
+#ggplot()+geom_histogram(data=g,aes(x=veg),bins=10,fill="yellow",col="purple")+theme_bw()+labs(x="Portions of veg",y="Number of veg)+scale_x_continuous(breaks=seq(from=0,to=9,by=1))")
+cancer <- g[,'cancer']
+> chisq.test(x=g$five_a_day,y=cancer) #Pearson's Chi-squared test with Yates' continuity correction
+> t.test(bmi~cancer) #Welch's test
+> t.test(bmi~cancer, var.equal=TRUE) #Two-sample t-test
+> t.test(bmi,mu=25)#One sample t-test
+g$overweight <- ifelse(g$bmi > 25,1,0)#defining overweight
+> chisq.test(x=g$overweight,y=cancer)#running the chi-squared test
