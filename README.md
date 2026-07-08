@@ -16,6 +16,6 @@ Bachelor of Medical Science with double major in Human Pathology & Anatomy, Dist
 Current professional development:\
 SAS Programmer Professional Certificate | _In progress_ | Completed all modules aside from Preparing for SAS 9.4 certificate modules\
 Statistical Analysis with R for Public Health Specialization | Imperial College London | _In progress_\
-SQL For Data Science | UC Davis | _Planned_\
+SQL For Data Science | University of California, Davis | _Planned_\
 Observational Health Data Sciences and Informatics: Observational Medical Outcomes Partnership Common Data Model (OHDSI OMOP CDM v6)  | European Health Data & Evidence Network Academy | _Planned_\
 DP-605 Prepare and visualise data with PowerBI & PL-300 Design and Manage Analytics solutions using PowerBI | _Planned_
