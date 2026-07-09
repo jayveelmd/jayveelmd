@@ -1,6 +1,6 @@
 Hi, thanks for taking the time to read about me.
 
-**_Work in progress_**
+**_GitHub profile is a work in progress_**
 
 I'm an aspiring epidemiologist and public health analyst. I am showcasing my career profile and my work with various analytical software.
 
