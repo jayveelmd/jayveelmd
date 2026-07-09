@@ -1,1 +1,310 @@
+      ###Vegetable intake on health study
 
+    ##The following can be considered direct input into the Stata command box
+. label variable id "Participant identification number"
+. label variable sex "Sex"
+. label variable age "Age"
+. label variable genhlth "General health rating"
+. label variable reggp "Has regular GP"
+. label variable vegwk "Total vegetable serves per week"
+. label define sex_lbl 1 "Male" 2 "Female"
+. label define genhlth_lbl 1 "Excellent" 2 "Very good" 3 "Good" 4 "Fair" 5 "Poor"
+. label define reggp_lbl 0 "No" 1 "Yes"
+. label value sex sex_lbl
+. label value genhlth genhlth_lbl
+. label value reggp reggp_lbl
+  ##Comment: The objective of the preface commands is to label binary and categorical data, which will allow the workflow to be easily understood as the analysis is being conducted. ‘sex’ and ‘reggp’ are binary variables and ‘genhlth’ is a categorical variable.
+. summarize vegwk, detail
+. histogram vegwk, width(2.5) start(0) frequency normal
+. summarize reggp, detail
+. codebook reggp
+    ##Comment: The goal is to characterise the data of ‘vegwk’ and ‘reggp’. For ‘vegwk’, a histogram and summary statistics demonstrate that this is normally distributed data. ‘Reggp’ is binary data, therefore, observing the codebook output provides useful information into the distribution and spread of participant categories.
+. histogram vegwk, by(, subtitle(Vegetable serves per week for those with or without regular GP)) by(reggp)
+. regress vegwk i.reggp
+    ##Comment: The first part will create a histogram that contrasts the regular GP group from the non-regular GP group and to describe it. The second line will perform a simple linear regression on vegetable serves in a week on regular GP status.
+. regress vegwk i.sex age i.genhlth i.reggp
+    ##Comment: sex, general health rating and having a regular GP require a dummy variable to be coded in the regression model, as they are either binary or categorical variables. For this example, we use “Male” as a reference point for sex, “Excellent” as a reference point for general health rating, and “No” as a reference point for having a regular GP.
+Optional:
+. pwcorr vegwk sex age genhlth reggp, sig
+. regress vegwk i.sex age ib5.genhlth i.reggp
+    ##Comment: The first line can be used as supplement to understand the Pearson’s correlation coefficients between the ‘vegwk’ and the explanatory variables. The second line can be used to have a health rating of 5 (Poor) as the reference point to avoid negative coefficients.
+
+      ###Computer use and Vitamin D levels study
+
+    ##Assigning meaningful labels and definitions to variables
+label variable id "Participant identification number"
+label variable vitd "Serum Vitamin D, nmol/L"
+label variable comp "Recreational computer use"
+label variable age "Age in years"
+label variable sex "Sex"
+label variable pedu "Highest parent education level"
+label variable act "Physical activity in the past 7 days"
+label variable pind "Family disadvantage level index"
+label define comp_lbl 0 "No" 1 "Yes"
+label define sex_lbl 1 "Male" 2 "Female"
+label define pedu_lbl 1 "Did not complete high school" 2 "High school" 3 "Higher education"
+label define act_lbl 0 "No" 1 "Yes"
+label value sex sex_lbl
+label value comp comp_lbl
+label value pedu pedu_lbl
+label value act act_lbl
+
+####1.2 Building a multiple linear regression model with evidence
+## Assessment of outliers
+scatter vitd pind || lfit vitd pind, title("Distribution of vitamin D on Family disadvantage level index") leg(off)
+## Assessment of and missing entries
+summarize
+mvpatterns
+list if pedu ==. | pind ==.
+## Creating new vitd variable by removing outlier, and confirming removal of single observation
+generate vitd_clean = vitd if vitd <120
+summarize vitd_clean, d
+
+#### 1.2.2 Univariate simple linear regressions
+## Model 0 to 5. Model 0 is not used in this analysis
+regress vitd_clean i.comp ** Model 0 ** 
+regress vitd_clean age *** Model 1 **
+regress vitd_clean i.sex ** Model 2 **
+regress vitd_clean i.pedu ** Model 3 **
+regress vitd_clean i.act ** Model 4 ** - was dropped from further analysis
+regress vitd_clean pind ** Model 5 **
+
+#### 1.2.3 Multiple linear regression base model with variance inflation factors (VIF)
+## Model 6
+regress vitd_clean i.comp age i.sex i.pedu pind
+testparm i.pedu
+estat vif
+
+#### 1.2.4 Assessment of effect modification and confounding 
+## Model 7
+regress vitd_clean i.comp age i.sex i.pedu i.act pind i.comp#age i.comp#sex
+testparm i.comp#age
+testparm i.comp#sex
+## Model 8
+regress vitd_clean i.comp age i.sex i.pedu i.act pind i.comp#age 
+testparm i.comp#age
+## Model 9
+regress vitd_clean i.comp age i.sex pind // Take the difference of 'Recreational computer use' parameter estimates in model 6 and model 9
+## Absolute difference calculation
+display (-3.476609 - (-3.234495))
+** Percent difference calculation
+display (-3.476609 - (-3.234495))/3.476609*100
+ 
+#### 1.3.1 The final model
+regress vitd_clean i.comp age i.sex i.pedu pind
+
+#### 1.3.2 Assessment of model assumptions
+## Predicting fitted values
+Predict yhat, xb
+## Predicting jackknife residuals
+Predict rjack, rstudent
+## Predicting cooks distances
+Predict cooksd, cooksd
+## Predicting residuals
+Predict res, residuals
+## Fulfilling assumptions
+## Cooks distances distribution
+dotplot cooksd, title("Predicted cooks distances")
+## Homoscedasticity assumption
+scatter rjack yhat || lfit rjack yhat, leg(off) title("Jackknife residuals over predicted fitted values")
+## Linearity assumption
+scatter rjack pind || lfit rjack pind, leg(off) title("Jackknife residuals over family disadvantage level index")
+## Normality assumption
+Qnorm rjack
+## Independence assumption
+## Independence is fulfilled by the study design
+
+## Assigning meaningful labels and definitions to variables 
+label variable PID "Participant identification number"
+label variable BMD "Bone mineral density, g/cm^2"
+label variable AGE "Age in years"
+label variable SEX "Sex"
+label define sex_lbl 1 "Male" 2 "Female"
+label value SEX sex_lbl
+## Checking for missing data in any observation
+summarize 
+mvpatterns
+## Creating a scatterplot to observe the relationship between the continuous variables
+scatter BMD AGE || lfit BMD AGE
+## Simple linear regression models 
+regress BMD AGE
+regress BMD i.SEX
+testparm i.SEX
+## Multiple linear regression model with interaction term
+regress BMD AGE i.SEX c.AGE#SEX
+## Calculating the value for females
+lincom AGE + c.AGE#2.SEX
+## Generating graph
+twoway (lfit BMD AGE if SEX==1) (lfit BMD AGE if SEX==2, lpattern(dash)), ytitle("Predicted bone mineral density (g/cm^2)") ylabel(0.9(0.1)1.2) legend(order(1 "Male" 2 "Female")) title("Effects of sex on bone mineral density and age")
+
+      ###Smoking and drugs of addiction study
+
+## Assigning meaningful labels and definitions to variables
+label variable id "Participant identification number" 
+label variable ecig "Uses electronic cigarettes" 
+label variable sex "Sex" 
+label variable age "Age in years" 
+label variable bmi "Body mass index (kg/m^2)" 
+label variable income "Yearly income"
+label variable campus "Lives on campus"
+label variable smoke "Smoked at least 100 cigarettes in lifetime"
+label variable alcohol "Average number of drinks on days when drinking"
+label variable exercise "Participates in regular physical activity"
+## Label values of categorical variables
+label define ynlbl 0 "No" 1 "Yes"
+label define sexlbl 1 "Male" 2 "Female"
+label define incomelbl 1 "Less than $20,000" 2 "$20,000 to <$40,000" 3 "$40,000 to <$80,000" 4 "$80,000 and above"
+label define alcohollbl 1 "Does not drink alcohol" 2 "1 to 2" 3 "3 or more"
+label values ecig ynlbl
+label values campus ynlbl
+label values smoke ynlbl
+label values exercise ynlbl
+label values sex sexlbl
+label values income incomelbl
+label values alcohol alcohollbl
+
+## 1.1 Assessing quality of data
+summarize
+mvpatterns
+tab ecig
+## Linearity assumption
+twoway (scatter age bmi) || lfit age bmi, ytitle(Age (years)) title(Distribution of age and BMI) leg(off)
+
+## 1.2 Univariate simple linear logistic models
+logistic ecig i.sex
+logistic ecig age
+logistic ecig bmi
+logistic ecig i.income
+logistic ecig i.campus
+logistic ecig i.smoke
+logistic ecig i.alcohol
+testparm i.alcohol
+logistic ecig i.exercise
+
+## 1.3 Multiple linear logistic model
+logistic ecig age bmi i.campus i.smoke i.alcohol ** Base model **
+estimates store base
+## Calculating variance inflation factors
+quietly regress ecig age bmi i.campus i.smoke i.alcohol
+estat vif
+
+## 1.4 Effect modification
+logistic ecig age bmi i.campus i.smoke i.alcohol
+estimates store base ** as described above
+logistic ecig age bmi i.campus i.smoke i.alcohol i.campus#c.bmi
+estimates store effectmod
+lrtest base effectmod
+## Confounding assessment
+logistic ecig age bmi i.campus i.smoke i.alcohol ** Model 1 // Base
+logistic ecig age i.campus i.smoke i.alcohol ** Model 2 // minus BMI
+logistic ecig i.campus i.smoke i.alcohol ** Model 3 // minus age,BMI
+
+## 1.5 Linearity check for continuous variables
+egen ageq=cut(age), group(4) label
+tab ageq
+## Midpoints of age quartiles using the midpoint formula
+input age_midpoint
+19.8
+22.8
+26.5
+40.1
+end
+## Refitting logistic model using categorical variable
+logistic ecig i.ageq i.campus i.smoke i.alcohol, coef
+## inputting age coefficients
+input ageq_coef
+0
+0.21
+-0.61
+-1.26
+end
+## Likelihood ratio test for age continuous vs age categorical
+logistic ecig age i.campus i.smoke i.alcohol
+estimates store agecont
+logistic ecig i.ageq i.campus i.smoke i.alcohol
+estimates store agecat
+lrtest agecont agecat
+
+## 1.6 Goodness of fit with the Hosmer-Lemeshow test
+logistic ecig age i.campus i.smoke i.alcohol
+estat gof, group(10)
+estat gof, group(8)
+estat gof, group(12)
+## Obtaining the ROC curve
+lroc, msymbol(none)
+
+
+## 1.7 Conclusion and likelihood ratio test for final model vs without study factor
+logistic ecig age i.campus i.smoke i.alcohol
+estimates store final
+logistic ecig age i.smoke i.alcohol
+estimates store nocampus
+lrtest final nocampus
+
+## Assigning meaningful labels and definitions to variables 
+label variable id "Participant identification number" 
+label variable time "Time from diagnosis to needing help with daily tasks (years)" 
+label variable event "Event indicator for needing help with daily tasks”
+label variable age "Participant age at baseline (years)"
+label variable home_size "Number of people living in the home" 
+
+## Label values of categorical variables
+label define eventlbl 1 "Yes" 0 "Censored"
+label define home_sizelbl 1 "1 person” 2 “2 people" 3 "3 or more people"
+label values event eventlbl
+label values home_size home_sizelbl
+
+## Analyse quality of data and missing entries if applicable
+Summarize
+mvpatterns
+## Declare ‘time to event data’ and view survival function
+stset time, failure(event)
+sts list
+## Quartiles of survival time, and confidence interval for median survival time based on home_size
+stsum
+stci
+stci, by(home_size) p(50)
+## Kaplan-Meier event probability curve
+sts graph, by(home_size) ytitle(Event probability) xtitle(Years) title("Kaplan-Meier event probability curve by home size") legend(label(1 "1 person") label(2 "2 people") label(3 "3 or more people")) tmax(10) yline(0.5, lwidth(0.1))
+## Kaplan-Meier survival curve – Checking 10 year remaining events
+sts graph, by(home_size) ytitle(Survival probability) xtitle(Years) title("Kaplan-Meier survival probability curve") legend(label(1 "1 person") label(2 "2 people") label(3 "3 or more people")) riskt ci tmax(10)
+## Log-rank test for number of people living in the household, trends and stratification with age and age groups
+sts test home_size
+sts test home_size, trend w
+recode age (min/64=1 "60-64 years old") (65/69=2 "65 to 69 years old") (70/74=3 "70 to 74 years old") (75/max=4 "75 to 79 years old"), generate(agegp)
+sts test home_size, strata(age)
+sts test home_size, strata(agegp)
+
+Question 2c)
+stphplot, by(home_size) nolntime xtitle(Years) title("Log-minus-log plot for home size") legend(label(1 "1 person") label(2 "2 people") label(3 "3 or more people"))
+## assessing potential confounding and effect modification
+## univariate Cox hazard regression
+stcox i.home_size, efron
+estimates store noage
+stcox age, efron
+## Multivariate Cox hazard regression
+stcox i.home_size age, efron
+estimates store base
+lrtest base noage
+## Final model
+stcox i.home_size age, efron
+lincom age*10, hr
+## Hazard proportion assumption 
+stcox i.home_size age, strata(age) efron
+estat phtest, plot(2.home_size) yline(0) xtitle(time(years)) ytitle(scaled schoenfeld – 2 people) title(schoenfeld residual plot for 2 people)
+estat phtest, plot(3.home_size) yline(0) xtitle(time(years)) ytitle(scaled schoenfeld – 3 or more people) title(schoenfeld residual plot for 3 or more people)
+estat phtest, plot(age) yline(0) xtitle(time(years)) ytitle(scaled schoenfeld – age(years)) title (schoenfeld residual plot for age)
+estat phtest, detail
+
+## Creating survival curve
+stcox i.home_size age, efron
+stcurve, survival at1(home_size=1 age=70) at2(home_size=2 age=70) at3(home_size=3 age=70) yline(0.5, lwidth(0.1)) xtitle(time(years)) ytitle(event probability) title(cox proportional hazard regression curve by home size) legend(label(1 "1 person") label(2 "2 people") label(3 "3 or more people"))
+
+## Predicting the survival probabilites for a 70 year participant using the survci package
+survci, at(home_size=1 age=70) outfile(home_size1.dta, replace) nodraw
+survci, at(home_size=2 age=70) outfile(home_size2.dta, replace) nodraw
+survci, at(home_size=3 age=70) outfile(home_size3.dta, replace) nodraw
+## Repeat for each data set generated with the survci package
+sort _surv
+sort _lb
+sort _ub
