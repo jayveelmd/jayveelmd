@@ -1,16 +1,13 @@
-    #Statistical Analysis with R for Public Health Specialisation | Imperial College London
-
-#Importing data script
+            #### Statistical Analysis with R for Public Health Specialisation | Imperial College London
+        ##Importing data, looking at variables & assigning names
+#Resetting environments and importing data script
+> rm(list=ls())#Resets data environments
 g <- read.csv("C:/Users/Jayvee Llor/Desktop/ICL/cancer data for MOOC 1.csv",
               header = TRUE,
-              sep = ",")
-fruit <- g[,'fruit']
-veg <- g[,'veg']
-fruitveg <- fruit + veg
-table(fruitveg)
-smoking <- g[,'smoking']
-age <- g[,'age']
-g$five_a_day <- ifelse(g$fruitveg >= 5, 1, 0)
+              sep = ",") #Imports data
+
+#Looking at data
+dim(g)
 hist(fruitveg, xlab = "Portions of Fruit and Veg") 
 main = "Daily consumption of fruit and veg"
 install.packages("ggplot2")
@@ -18,7 +15,18 @@ require(ggplot2)
 g$healthy_BMI <- ifelse(g$bmi > 18.5 & g$bmi <25,1,0)
 #ggplot()+geom_histogram(data=g,aes(x=fruit),bins=5,fill="green",col="darkgreen")+theme_bw()+labs(x="Portions of fruit",y="Number of fruit)+scale_x_continuous(breaks=seq(from=0,to=4,by=1))")
 #ggplot()+geom_histogram(data=g,aes(x=veg),bins=10,fill="yellow",col="purple")+theme_bw()+labs(x="Portions of veg",y="Number of veg)+scale_x_continuous(breaks=seq(from=0,to=9,by=1))")
+
+#Assigning names
+fruit <- g[,'fruit']
+veg <- g[,'veg']
+fruitveg <- fruit + veg
+table(fruitveg)
+smoking <- g[,'smoking']
+age <- g[,'age']
 cancer <- g[,'cancer']
+g$five_a_day <- ifelse(g$fruitveg >= 5, 1, 0)
+
+        ##Tests for linear regression
 > chisq.test(x=g$five_a_day,y=cancer) #Pearson's Chi-squared test with Yates' continuity correction
 > t.test(bmi~cancer) #Welch's test
 > t.test(bmi~cancer, var.equal=TRUE) #Two-sample t-test
@@ -28,7 +36,7 @@ g$overweight <- ifelse(g$bmi > 25,1,0)#defining overweight
 
 
 ---
-> rm(list=ls())#Resets data environments
+            ##COPD student dataset
 COPD <- read.csv("C:/Users/Jayvee Llor/Desktop/ICL/COPD_student_dataset.csv", header = TRUE, sep = ",")#Read the file
 ##Descriptive statistics
 > dim(COPD)#shows numbers of rows and columns
@@ -45,3 +53,29 @@ COPD <- read.csv("C:/Users/Jayvee Llor/Desktop/ICL/COPD_student_dataset.csv", he
 > plot(COPD$FEV1,COPD$MWT1Best,xlab="FEV1",ylab="MWT1Best")#Correlation plot
 > cor.test(COPD$FEV1, COPD$MWT1Best, use="complete.obs", method="pearson")#Pearson's correlation test
 > cor.test(COPD$FEV1, COPD$MWT1Best, use="complete.obs", method="spearman")#Spearman's correlation test
+
+---
+
+        ##Diabetes data for R
+g <- read.csv("C:/Users/Jayvee Llor/Desktop/ICL/final-diabetes-data-for-R.csv",
+              header = TRUE,
+              sep = ",")
+#Descriptive statistics
+dim(g)
+colnames(g)
+dimnames(g)[2] #similar to colnames, remove the 2 if you want to see name of rows
+
+    #Formatting variables to categorical - R  thinks variables are continuous by default
+#For categorical variables
+gender <- as.factor(g[,”gender”]) # but gender isn’t.
+dm <- as.factor(g[,”dm”]) # neither is dm
+t <- table(gender) # store the tabulation for further manipulation
+addmargins(t) # this will sum up the gender totals to give an overall total and print the results
+round(prop.table(t),digits=3) # get proportions rounded to 3dp
+	OR
+round(100*prop.table(t),digits=1) # get %s rounded to 1dp
+table(dm) #excludes missing values by default, so add the exclude=null option
+dm2 <- factor(dm, exclude=NULL) #make a factor from the old one
+table(dm2) #shows NA
+
+#For continuous variables
