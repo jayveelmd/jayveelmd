@@ -2,7 +2,7 @@ Hi, thanks for taking the time to read about me.
 
 **_My GitHub profile is a work in progress_**
 
-I'm an aspiring epidemiologist and public health analyst residing in Sydney, Australia. I am showcasing my career profile and my work with various analytical softwares, icluding R, SAS, SQL, STATA, REDCap and more.
+I'm an aspiring epidemiologist and public health analyst residing in Sydney, Australia. I am showcasing my career profile and my work with various analytical softwares, icluding R, SAS, SQL, Stata, REDCap and more.
 
 I use several NSW health proprietary software in my day to day role, such as Discern Analytics 2.0, FirstNet, and various Cerner Millennium products, such as Discern Explorer (Cerner equivalent to SQL).
 
@@ -18,8 +18,8 @@ Bachelor of Medical Science with double major in Human Pathology & Anatomy, Dist
 
 
 Current professional development:\
+Statistical Analysis with R for Public Health Specialization | Imperial College London | _Complete_\
 SAS Programmer Professional Certificate | _In progress_ | Completed all modules aside from Preparing for SAS 9.4 certificate modules\
-Statistical Analysis with R for Public Health Specialization | Imperial College London | _In progress_\
 SQL For Data Science | University of California, Davis | _Planned_\
 Observational Health Data Sciences and Informatics: Observational Medical Outcomes Partnership Common Data Model (OHDSI OMOP CDM v6)  | European Health Data & Evidence Network Academy | _Planned_\
 DP-605 Prepare and visualise data with PowerBI & PL-300 Design and Manage Analytics solutions using PowerBI | _Planned_
