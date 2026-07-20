@@ -6,7 +6,7 @@ I'm an aspiring epidemiologist and public health analyst residing in Sydney, Aus
 
 I use several NSW health proprietary software in my day to day role, such as Discern Analytics 2.0, FirstNet, and various Cerner Millennium products, such as Discern Explorer (Cerner equivalent to SQL).
 
-Career profile:\
+_**Career profile:**_\
 **Master of Public Health** with specialisation in Epidemiology and Biostatistics | 2026 QS Global ranked 19th university, 1st in Australia (UNSW)\
 **Emergency Data Manager** at the highest volume acute healthcare services unit in NSW’s largest paediatric specialty network (SCHN)\
 **Multi-time author** and acknowledgements in high impact medical journals\
@@ -17,12 +17,13 @@ Bachelor of Science (Honours) in Cancer and Stem Cell Biology, First Class (UNSW
 Bachelor of Medical Science with double major in Human Pathology & Anatomy, Distinction (UNSW)\
 
 
-Current professional development:\
+_**Current professional development**_:\
 Statistical Analysis with R for Public Health Specialization | Imperial College London | _Complete_\
+SQL For Data Science | University of California, Davis | _Complete_\
 SAS Programmer Professional Certificate | _In progress_ | Completed all modules aside from Preparing for SAS 9.4 certificate modules\
-SQL For Data Science | University of California, Davis | _In Progress_\
+Power BI Data Analyst Associate | Microsoft | _In progress_\
+
 Applied Data Science with R Specialization | IBM | _Planned_\
-Power BI Data Analyst Associate | Microsoft | _Planned_\
 Observational Health Data Sciences and Informatics: Observational Medical Outcomes Partnership Common Data Model (OHDSI OMOP CDM v6)  | European Health Data & Evidence Network Academy | _Planned_\
 IBM Data Analytics with Excel and R Professional Certificate | IBM | _Planned_\
 DP-605 Prepare and visualise data with PowerBI & PL-300 Design and Manage Analytics solutions using PowerBI | _Planned_
